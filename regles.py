@@ -1,4 +1,54 @@
+import numpy as np
 
+
+class Puissance4:
+    def __init__(self):
+        self.grille = np.zeros((6, 7), dtype=int)  # Grille 6x7 remplie de 0
+
+    def afficher_grille(self):
+        # Affichage de la grille en remplaçant les 0 par des espaces
+        print("\n".join(" | ".join(map(str, ligne)) for ligne in self.grille))
+        print("\n")
+
+    def placer_jeton(self, colonne, joueur):
+        # Trouver la première ligne vide dans la colonne
+        lignes_vides = np.where(self.grille[:, colonne] == 0)[0]  # Indices des lignes vides
+        if lignes_vides.size > 0:  # Si au moins une ligne vide existe
+            self.grille[lignes_vides[-1], colonne] = joueur
+            return True
+        return False
+
+    def verifier_victoire(self, joueur):
+        # Horizontal
+        for row in range(6):
+            if self._check_sequence(self.grille[row, :], joueur):
+                return True
+        # Vertical
+        for col in range(7):
+            if self._check_sequence(self.grille[:, col], joueur):
+                return True
+        # Diagonales
+        for row in range(3):
+            for col in range(4):
+                # Diagonale ascendante
+                if all(self.grille[row + i, col + i] == joueur for i in range(4)):
+                    return True
+                # Diagonale descendante
+                if all(self.grille[row + 3 - i, col + i] == joueur for i in range(4)):
+                    return True
+        return False
+
+    def _check_sequence(self, ligne, joueur):
+        # Vérifie s'il existe une séquence de 4 jetons du joueur
+        compteur = 0
+        for value in ligne:
+            if value == joueur:
+                compteur += 1
+                if compteur == 4:
+                    return True
+            else:
+                compteur = 0
+        return False
 from fonctions import *
 import itertools
 
